@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    
+    <!--公共CDN库，不存在跨域问题-->
+    <link href="https://cdn.bootcdn.net/ajax/libs/element-ui/2.9.2/theme-chalk/index.css" rel="stylesheet" />
+    <!--引入 element-ui 的样式，外部域名调用存在跨域问题，需配置-->
+    <link href="css/element.css" rel="stylesheet" />
+    <!-- 必须先引入vue后使用element-ui -->
+    <script src="js/vue.js"></script>
+    <!-- 引入element 的组件库-->
+    <script src="js/element.js"></script>
+</head>
+<body>2
+
+    <!--https://element.eleme.cn/#/zh-CN/component/notification-->
+    <script>
+        new Vue({
+            data: function () {
+
+                //this.$notify({
+                //    title: '成功',
+                //    message: '这是一条成功的提示消息',
+                //    type: 'success'
+                //});
+
+                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });          
+                });
+
+                // this.$notify({
+                //     title: '警告',
+                //     message: '这是一条警告的提示消息',
+                //     type: 'warning'
+                // });
+
+                // this.$notify.info({
+                //     title: '消息',
+                //     message: '这是一条消息的提示消息'
+                // });
+
+                // this.$notify.error({
+                //     title: '错误',
+                //     message: '这是一条错误的提示消息'
+                // });
+
+                return { visible: false }
+
+            }
+        })
+    </script>
+
+</body>
+</html>
