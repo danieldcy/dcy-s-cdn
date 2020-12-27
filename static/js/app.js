@@ -1,68 +1,5 @@
 "use strict";
-
-//-----------------------------------------ajax封装-------------------------------
-function ajax(options) {
-    options = options || {};  //调用函数时如果options没有指定，就给它赋值{},一个空的Object
-    options.type = (options.type || "GET").toUpperCase();/// 请求格式GET、POST，默认为GET
-    options.dataType = options.dataType || "json";    //响应数据格式，默认json
-
-    var params = formatParams(options.data);//options.data请求的数据
-
-    var xhr;
-
-    //考虑兼容性
-    if (window.XMLHttpRequest) {
-        xhr = new XMLHttpRequest();
-    } else if (window.ActiveObject) {//兼容IE6以下版本
-        xhr = new ActiveXobject('Microsoft.XMLHTTP');
-    }
-
-    //启动并发送一个请求
-    if (options.type == "GET") {
-        xhr.open("GET", options.url + "?" + params, true);
-        xhr.send(null);
-    } else if (options.type == "POST") {
-        xhr.open("post", options.url, true);
-
-        //设置表单提交时的内容类型
-        //Content-type数据请求的格式
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-        xhr.send(params);
-    }
-
-    //    设置有效时间
-    setTimeout(function () {
-        if (xhr.readySate != 4) {
-            xhr.abort();
-        }
-    }, options.timeout)
-
-    //    接收
-    //     options.success成功之后的回调函数  options.error失败后的回调函数
-    //xhr.responseText,xhr.responseXML  获得字符串形式的响应数据或者XML形式的响应数据
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4) {
-            var status = xhr.status;
-            if (status >= 200 && status < 300 || status == 304) {
-                options.success && options.success(xhr.responseText, xhr.responseXML);
-            } else {
-                options.error && options.error(status);
-            }
-        }
-    }
-}
-
-//格式化请求参数
-function formatParams(data) {
-    var arr = [];
-    for (var name in data) {
-        arr.push(encodeURIComponent(name) + "=" + encodeURIComponent(data[name]));
-    }
-    arr.push(("v=" + Math.random()).replace(".", ""));
-    return arr.join("&");
-
-}
-
+console.log(' %c Theme Cuteen v4.1(20201213) %c https://blog.zwying.com/ ', 'color: #fff; background: #2dce89; padding:5px;', 'background: #1c2b36; padding:5px;');
 //----------------------------------------添加、删除Class---------------------------------------
 function hasClass(obj, cls) {
     return obj.className.match(new RegExp('(\\s|^)' + cls + '(\\s|$)'));
@@ -142,13 +79,15 @@ const Cuteen = {
     mobileMusicToggle: function () {
         const musicPop = document.getElementById('mobileMusic');
         const box = document.getElementById('musicMobileBox');
-        musicPop.onclick = function () {
-            if (box.className === 'on') {
-                box.classList.remove('on');
-                Cuteen.maskOff();
-            } else {
-                box.classList.add('on');
-                Cuteen.maskOn();
+        if (musicPop !== null){
+            musicPop.onclick = function () {
+                if (box.className === 'on') {
+                    box.classList.remove('on');
+                    Cuteen.maskOff();
+                } else {
+                    box.classList.add('on');
+                    Cuteen.maskOn();
+                }
             }
         }
     },
@@ -294,7 +233,7 @@ const Cuteen = {
                         const newIdNumber = response.data.match(/id=\"?comment-\d+/g).join().match(/\d+/g).sort(
                             function (a, b) {
                                 return a - b;
-                            }
+                            } 
                         ).pop();
                         const newId = 'comment-'.concat(newIdNumber);
                         const oldList = document.getElementsByClassName('comment-list');
@@ -344,16 +283,10 @@ const Cuteen = {
                 }).showToast();//提示已经点过赞
                 return '';
             } else {
-                ajax({
-                    url: Config.homeUrl + '/action/like?up',
-                    type: 'POST',
-                    data: {
-                        cid: dataID
-                    },
-                    dataType: 'json',
-                    timeout: 10000,
-                    contentType: "application/json",
-                    success: function (data) {
+                axios.post(Config.homeUrl + '/action/cuteen?content', {
+                    cid: dataID
+                })
+                    .then(function (response) {
                         like.classList.remove('btn-outline-primary');
                         like.classList.add('btn-primary');
                         Cookies.set('upstar', dataID, {expires: 7});
@@ -366,9 +299,8 @@ const Cuteen = {
                             className: "info",
                         }).showToast();//点赞成功！感谢支持~
                         return '';
-                    },
-                    //异常处理
-                    error: function (e) {
+                    })
+                    .catch(function (error) {
                         Toastify({
                             duration: 3000,
                             position: 'center',
@@ -376,9 +308,8 @@ const Cuteen = {
                             backgroundColor: "var(--bs-danger)",
                             className: "info",
                         }).showToast();
-                        console.log(e);
-                    }
-                })
+                        console.log(error);
+                    });
             }
         }
         return false;
@@ -440,7 +371,9 @@ const Cuteen = {
                     } else {
                         const list = convert.getElementsByClassName('article');//获取新列表
                         const newHrefPosition = convert.getElementsByClassName('next')[0];
-                        const newhref = newHrefPosition.getAttribute('href');
+                        if (newHrefPosition!==undefined) {
+                            var newhref = newHrefPosition.getAttribute('href');
+                        }
                         let b = '';
                         for (let v of list) {
                             b += v.outerHTML;
@@ -456,11 +389,11 @@ const Cuteen = {
                         } else {
                             insertPosition.insertAdjacentHTML('beforeend', b);//插入新列表列表模式
                         }
-                        link.insertAdjacentHTML('beforeend', '<button id="NextButton" onclick="Cuteen.ajaxNext()" class="btn btn-primary col-3 mx-auto rounded-pill">点击加载更多</button>')
-                        link.setAttribute('href', newhref);
-                        let lazy = new LazyLoad({
-                            // Your custom settings go here
-                        });
+                        if (newHrefPosition!==undefined) {
+                            link.insertAdjacentHTML('beforeend', '<button id="NextButton" onclick="Cuteen.ajaxNext()" class="btn btn-primary col-3 mx-auto rounded-pill">点击加载更多</button>')
+                            link.setAttribute('href', newhref);
+                        }
+                        let lazy = new LazyLoad();
                         lazy.update();
                         return false;
                     }
@@ -721,22 +654,21 @@ const Cuteen = {
     },
     themeColorCheck: function () {
         const themeColor = Cookies.get('themeColor');
-        console.log(themeColor)
         if (themeColor === 'primary') {
             this.themeColor('primary');
-            document.querySelector('.btn-check[value="primary"]').setAttribute('checked','checked');
+            document.querySelector('.btn-check[value="primary"]').setAttribute('checked', 'checked');
         } else if (themeColor === 'warning') {
             this.themeColor('warning');
-            document.querySelector('.btn-check[value="warning"]').setAttribute('checked','checked');
+            document.querySelector('.btn-check[value="warning"]').setAttribute('checked', 'checked');
         } else if (themeColor === 'success') {
             this.themeColor('success');
-            document.querySelector('.btn-check[value="success"]').setAttribute('checked','checked');
+            document.querySelector('.btn-check[value="success"]').setAttribute('checked', 'checked');
         } else if (themeColor === 'info') {
-            document.querySelector('.btn-check[value="info"]').setAttribute('checked','checked');
+            document.querySelector('.btn-check[value="info"]').setAttribute('checked', 'checked');
             this.themeColor('info');
         } else if (themeColor === 'danger') {
             this.themeColor('danger');
-            document.querySelector('.btn-check[value="danger"]').setAttribute('checked','checked');
+            document.querySelector('.btn-check[value="danger"]').setAttribute('checked', 'checked');
         }
     }
 }
