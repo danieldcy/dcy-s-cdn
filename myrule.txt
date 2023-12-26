@@ -22,7 +22,7 @@ ruleset=Proxies,[]MATCH
 ;设置分组标志位
 custom_proxy_group=Proxies`select`[]Daily`[]HK`[]SG`[]JP`[]US`[]TW`.*
 custom_proxy_group=Apple`select`[]DIRECT`[]Proxies
-custom_proxy_group=AI`fallback`(美国实验性|新加坡实验性|香港实验性|日本实验性)`http://www.gstatic.com/generate_204`300,5
+custom_proxy_group=AI`fallback`美国实验性`新加坡实验性`香港实验性`日本实验性`http://www.gstatic.com/generate_204`300,5
 custom_proxy_group=MicroSoft`select`[]DIRECT`[]Proxies
 custom_proxy_group=Telegram`select`[]Proxies`[]HK`[]SG
 custom_proxy_group=Streaming`select`[]Proxies`[]Daily`[]HK`[]SG`[]JP`[]US`[]TW`NF|Netflix|NETFLIX|原生|解锁
